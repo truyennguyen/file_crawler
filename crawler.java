@@ -13,15 +13,23 @@ public class crawler {
     private static void findTxtFiles(String path){
         File dir = new File(path);
         File[] files = dir.listFiles();
+
         for(File file:files){
             String filename = file.getName();
-            if(filename.endsWith(".txt"))
+
+            // If file is .txt type
+            if(file.isFile() && filename.endsWith(".txt"))
                 arrTxtFiles.add(file);
-            else if (filename.endsWith(".zip")){
-                String unzipFolder = filename.substring(0, filename.lastIndexOf('.'));
+
+            // If file is .zip type, unzip & look for .txt files
+            else if (file.isFile() && filename.endsWith(".zip")){
+                String unzipFolderName = filename.substring(0, filename.lastIndexOf('.'));
+
                 unzip(file.getAbsolutePath(), file.getParent());
-                findTxtFiles(file.getParent() + '/' + unzipFolder);
+                findTxtFiles(file.getParent() + '/' + unzipFolderName);
             }
+
+            //recursive call
             else if(file.isDirectory())
                 findTxtFiles(file.getPath());
         }
