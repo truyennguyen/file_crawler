@@ -14,7 +14,7 @@ public class crawler {
     private static ArrayList<File> arrTextFiles = new ArrayList<File>();
     private static Map<String, Integer> hm = new HashMap<String, Integer>();
 
-    private static void findTxtFiles(String path){
+    private static boolean findTxtFiles(String path){
         File dir = new File(path);
 
         if(dir.exists()) {
@@ -39,10 +39,12 @@ public class crawler {
                 else if (file.isDirectory())
                     findTxtFiles(file.getPath());
             }
+            return true;
         }
         else
         {
             System.out.print("Directory not found - " + path);
+            return false;
         }
     }
 
@@ -126,7 +128,7 @@ public class crawler {
         }
     }
 
-    private static void printHistogram(){
+    private static void printHistogramUtil(){
         for(Map.Entry<String, Integer> element:hm.entrySet()){
             System.out.print(element.getKey() + ": ");
             for(int i = 0; i < element.getValue(); i++)
@@ -139,9 +141,14 @@ public class crawler {
         return hm.get(str);
     }
 
+    private static void printHistogram(String path){
+        if(findTxtFiles(path)){
+            readFiles();
+            printHistogramUtil();
+        }
+    }
+
     public static void main(String[] args) {
-        findTxtFiles("/home/nmt/Desktop/file1");
-        readFiles();
-        printHistogram();
+        printHistogram("/home/nmt/Desktop/file1");
     }
 }
