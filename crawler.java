@@ -10,7 +10,6 @@ import java.util.zip.ZipInputStream;
 import java.util.Scanner;
 
 public class crawler {
-
     private static ArrayList<File> arrTextFiles = new ArrayList<File>();
     private static Map<String, Integer> hm = new HashMap<String, Integer>();
 
@@ -49,7 +48,6 @@ public class crawler {
     }
 
     private static void unzip(String zipFile, String destinationFolder) {
-
         File directory = new File(destinationFolder);
 
         //if the output directory doesn't exist, create it
@@ -137,7 +135,7 @@ public class crawler {
         }
     }
 
-    private static int checkCount(String str){
+    public static int checkCount(String str){
         return hm.get(str);
     }
 
