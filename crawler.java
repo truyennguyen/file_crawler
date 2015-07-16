@@ -3,12 +3,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.Scanner;
 
 public class crawler {
 
-    private static ArrayList<File> arrTxtFiles = new ArrayList<File>();
+    private static ArrayList<File> arrTextFiles = new ArrayList<File>();
+    private static Map<String, Integer> hm = new HashMap<String, Integer>();
 
     private static void findTxtFiles(String path){
         File dir = new File(path);
@@ -19,7 +23,7 @@ public class crawler {
 
             // If file is .txt type
             if(file.isFile() && filename.endsWith(".txt"))
-                arrTxtFiles.add(file);
+                arrTextFiles.add(file);
 
             // If file is .zip type, unzip & look for .txt files
             else if (file.isFile() && filename.endsWith(".zip")){
@@ -34,7 +38,9 @@ public class crawler {
                 findTxtFiles(file.getPath());
         }
     }
+
     private static void unzip(String zipFile, String destinationFolder) {
+
         File directory = new File(destinationFolder);
 
         // if the output directory doesn't exist, create it
@@ -90,7 +96,35 @@ public class crawler {
         }
     }
 
+    private static void readFile() {
+        try {
+            for (File file : arrTextFiles) {
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNext()) {
+                    String word = scanner.next();
+                    word = word.replaceAll("\\W(?<!')", "").toLowerCase();
+
+                    if (hm.containsKey(word)) {
+                        int tempCount = hm.get(word);
+                        hm.put(word, tempCount + 1);
+                    }
+                    else
+                        hm.put(word, 1);
+                }
+            }
+        } catch (Exception e) {
+            System.out.print("Read file - Exception thrown is " + e);
+        }
+    }
+
+    private static int checkCount(String str){
+        return hm.get(str);
+    }
+
     public static void main(String[] args) {
-        findTxtFiles("/home/nmt/Desktop/files2");
+        findTxtFiles("/home/nmt/Desktop/file1");
+        readFile();
+
+        System.out.print(checkCount("that's"));
     }
 }
