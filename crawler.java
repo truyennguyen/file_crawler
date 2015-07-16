@@ -135,11 +135,11 @@ public class crawler {
         }
     }
 
-    public static int checkCount(String str){
+    private static int checkCount(String str){
         return hm.get(str);
     }
 
-    private static void printHistogram(String path){
+    public static void printHistogram(String path){
         if(findTxtFiles(path)){
             readFiles();
             printHistogramUtil();
