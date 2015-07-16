@@ -16,26 +16,34 @@ public class crawler {
 
     private static void findTxtFiles(String path){
         File dir = new File(path);
-        File[] files = dir.listFiles();
 
-        for(File file:files){
-            String filename = file.getName();
+        if(dir.exists()) {
 
-            // If file is .txt type
-            if(file.isFile() && filename.endsWith(".txt"))
-                arrTextFiles.add(file);
+            File[] files = dir.listFiles();
 
-            // If file is .zip type, unzip & look for .txt files
-            else if (file.isFile() && filename.endsWith(".zip")){
-                String unzipFolderName = filename.substring(0, filename.lastIndexOf('.'));
+            for (File file : files) {
+                String filename = file.getName();
 
-                unzip(file.getAbsolutePath(), file.getParent());
-                findTxtFiles(file.getParent() + '/' + unzipFolderName);
+                // If file is .txt type
+                if (file.isFile() && filename.endsWith(".txt"))
+                    arrTextFiles.add(file);
+
+                    // If file is .zip type, unzip & look for .txt files
+                else if (file.isFile() && filename.endsWith(".zip")) {
+                    String unzipFolderName = filename.substring(0, filename.lastIndexOf('.'));
+
+                    unzip(file.getAbsolutePath(), file.getParent());
+                    findTxtFiles(file.getParent() + '/' + unzipFolderName);
+                }
+
+                //recursive call
+                else if (file.isDirectory())
+                    findTxtFiles(file.getPath());
             }
-
-            //recursive call
-            else if(file.isDirectory())
-                findTxtFiles(file.getPath());
+        }
+        else
+        {
+            System.out.print("Directory not found");
         }
     }
 
@@ -117,6 +125,15 @@ public class crawler {
         }
     }
 
+    private static void printHistogram(){
+        for(Map.Entry<String, Integer> element:hm.entrySet()){
+            System.out.print(element.getKey() + ": ");
+            for(int i = 0; i < element.getValue(); i++)
+                System.out.print('*');
+            System.out.println();
+        }
+    }
+
     private static int checkCount(String str){
         return hm.get(str);
     }
@@ -124,7 +141,6 @@ public class crawler {
     public static void main(String[] args) {
         findTxtFiles("/home/nmt/Desktop/file1");
         readFile();
-
-        System.out.print(checkCount("that's"));
+        printHistogram();
     }
 }
