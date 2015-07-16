@@ -18,17 +18,16 @@ public class crawler {
         File dir = new File(path);
 
         if(dir.exists()) {
-
             File[] files = dir.listFiles();
 
             for (File file : files) {
                 String filename = file.getName();
 
-                // If file is .txt type
+                //If file is .txt type
                 if (file.isFile() && filename.endsWith(".txt"))
                     arrTextFiles.add(file);
 
-                    // If file is .zip type, unzip & look for .txt files
+                //If file is .zip type, unzip & look for .txt files
                 else if (file.isFile() && filename.endsWith(".zip")) {
                     String unzipFolderName = filename.substring(0, filename.lastIndexOf('.'));
 
@@ -43,7 +42,7 @@ public class crawler {
         }
         else
         {
-            System.out.print("Directory not found");
+            System.out.print("Directory not found - " + path);
         }
     }
 
@@ -51,11 +50,11 @@ public class crawler {
 
         File directory = new File(destinationFolder);
 
-        // if the output directory doesn't exist, create it
+        //if the output directory doesn't exist, create it
         if(!directory.exists())
             directory.mkdirs();
 
-        // buffer for read and write data to file
+        //buffer for read and write data to file
         byte[] buffer = new byte[2048];
 
         try {
@@ -70,7 +69,7 @@ public class crawler {
 
                 System.out.println("Unzip file " + entryName + " to " + file.getAbsolutePath());
 
-                // create the directories of the zip directory
+                //create the directories of the zip directory
                 if(entry.isDirectory()) {
                     File newDir = new File(file.getAbsolutePath());
                     if(!newDir.exists()) {
@@ -84,17 +83,17 @@ public class crawler {
                     FileOutputStream fOutput = new FileOutputStream(file);
                     int count = 0;
                     while ((count = zipInput.read(buffer)) > 0) {
-                        // write 'count' bytes to the file output stream
+                        //write 'count' bytes to the file output stream
                         fOutput.write(buffer, 0, count);
                     }
                     fOutput.close();
                 }
-                // close ZipEntry and take the next one
+                //close ZipEntry and take the next one
                 zipInput.closeEntry();
                 entry = zipInput.getNextEntry();
             }
 
-            // close the last ZipEntry
+            //close the last ZipEntry
             zipInput.closeEntry();
 
             zipInput.close();
@@ -104,18 +103,20 @@ public class crawler {
         }
     }
 
-    private static void readFile() {
+    private static void readFiles() {
         try {
             for (File file : arrTextFiles) {
                 Scanner scanner = new Scanner(file);
                 while (scanner.hasNext()) {
                     String word = scanner.next();
-                    word = word.replaceAll("\\W(?<!')", "").toLowerCase();
 
+                    word = word.replaceAll("\\W(?<!')", "").toLowerCase();  //trim the word
+                    //the word exists in hash map
                     if (hm.containsKey(word)) {
                         int tempCount = hm.get(word);
                         hm.put(word, tempCount + 1);
                     }
+                    //the word not exists in hash map
                     else
                         hm.put(word, 1);
                 }
@@ -140,7 +141,7 @@ public class crawler {
 
     public static void main(String[] args) {
         findTxtFiles("/home/nmt/Desktop/file1");
-        readFile();
+        readFiles();
         printHistogram();
     }
 }
