@@ -20,7 +20,7 @@ public class crawler {
 
     /* Find the .txt files in the path
      * return true if the path exists, otherwise return false */
-    private static boolean findTxtFiles(String path){
+    private boolean findTxtFiles(String path){
         File dir = new File(path);
 
         if(dir.exists()) {
@@ -55,7 +55,7 @@ public class crawler {
     }
 
     /* Unzip the .zip file */
-    private static void unzip(String zipFile, String destinationFolder) {
+    private void unzip(String zipFile, String destinationFolder) {
         File directory = new File(destinationFolder);
 
         //if the output directory doesn't exist, create it
@@ -112,7 +112,7 @@ public class crawler {
     }
 
     /* Read .txt files and count how many words for each words */
-    private static void readFiles() {
+    private void readFiles() {
         try {
             for (File file : arrTextFiles) {
                 Scanner scanner = new Scanner(file);
@@ -138,7 +138,7 @@ public class crawler {
     /* print histogram pattern by '*'
      *  If isSorted is true, print sorted by word counts
      *  if isSorted is false, print unsorted by word counts*/
-    private static void printHistogramUtil(boolean isSorted){
+    private void printHistogramUtil(boolean isSorted){
         Map<String, Integer> tempMap;
         if(isSorted)
             tempMap = sortedHm;
@@ -154,7 +154,7 @@ public class crawler {
     }
 
     /* Sort the word count map by values */
-    private static void sortMapByValues() {
+    private void sortMapByValues() {
         List mapKeys = new ArrayList(hm.keySet());
         List mapValues = new ArrayList(hm.values());
         Collections.sort(mapValues, Collections.reverseOrder());
@@ -182,14 +182,14 @@ public class crawler {
     }
 
     /* Check words count by word, for testing purpose */
-    private static int checkCount(String str){
+    private int checkCount(String str){
         return hm.get(str);
     }
 
     /* Print histogram pattern based on the word count in the .txt files in the path
      * if isSorted is true, print sorted histogram pattern based on the word counts
      * if isSorted is false, print unsorted histogram pattern based on the word counts*/
-    public static void printHistogram(String path, boolean isSorted){
+    public void printHistogram(String path, boolean isSorted){
         if(findTxtFiles(path)){
             readFiles();
             if(isSorted) {
@@ -200,7 +200,12 @@ public class crawler {
                 printHistogramUtil(false);
         }
     }
+}
 
+/* Driver Class */
+class Main
+{
+    // Main method.
     public static void main(String[] args) {
         crawler fileCrawler = new crawler();
         fileCrawler.printHistogram("/home/nmt/Desktop/file1", true);
