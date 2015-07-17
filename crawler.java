@@ -2,22 +2,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.Scanner;
 
 public class crawler {
     private static ArrayList<File> arrTextFiles;
     private static Map<String, Integer> hm;
+    private static Map<String, Integer> sortedHm;
 
+    /* Constructor */
     public crawler() {
         this.arrTextFiles = new ArrayList<File>();
         this.hm = new HashMap<String, Integer>();
+        this. sortedHm = new LinkedHashMap<String, Integer>();
     }
 
+    /* Find the .txt files in the path
+     * return true if the path exists, otherwise return false */
     private static boolean findTxtFiles(String path){
         File dir = new File(path);
 
@@ -52,6 +56,7 @@ public class crawler {
         }
     }
 
+    /* Unzip the .zip file */
     private static void unzip(String zipFile, String destinationFolder) {
         File directory = new File(destinationFolder);
 
@@ -108,6 +113,7 @@ public class crawler {
         }
     }
 
+    /* Read .txt files and count how many words for each words */
     private static void readFiles() {
         try {
             for (File file : arrTextFiles) {
@@ -131,8 +137,17 @@ public class crawler {
         }
     }
 
-    private static void printHistogramUtil(){
-        for(Map.Entry<String, Integer> element:hm.entrySet()){
+    /* print histogram pattern by '*'
+     *  If isSorted is true, print sorted by word counts
+     *  if isSorted is false, print unsorted by word counts*/
+    private static void printHistogramUtil(boolean isSorted){
+        Map<String, Integer> tempMap;
+        if(isSorted)
+            tempMap = sortedHm;
+        else
+            tempMap = hm;
+
+        for(Map.Entry<String, Integer> element: tempMap.entrySet()){
             System.out.print(element.getKey() + ": ");
             for(int i = 0; i < element.getValue(); i++)
                 System.out.print('*');
@@ -140,19 +155,56 @@ public class crawler {
         }
     }
 
+    /* Sort the word count map by values */
+    private static void sortMapByValues() {
+        List mapKeys = new ArrayList(hm.keySet());
+        List mapValues = new ArrayList(hm.values());
+        Collections.sort(mapValues, Collections.reverseOrder());
+        Collections.sort(mapKeys, Collections.reverseOrder());
+
+        Iterator valueIt = mapValues.iterator();
+        while (valueIt.hasNext()) {
+            Object val = valueIt.next();
+            Iterator keyIt = mapKeys.iterator();
+
+            while (keyIt.hasNext()) {
+                Object key = keyIt.next();
+                String comp1 = hm.get(key).toString();
+                String comp2 = val.toString();
+
+                if (comp1.equals(comp2)){
+                    hm.remove(key);
+                    mapKeys.remove(key);
+
+                    sortedHm.put((String) key, (Integer) val);
+                    break;
+                }
+            }
+        }
+    }
+
+    /* Check words count by word, for testing purpose */
     private static int checkCount(String str){
         return hm.get(str);
     }
 
-    public static void printHistogram(String path){
+    /* Print histogram pattern based on the word count in the .txt files in the path
+     * if isSorted is true, print sorted histogram pattern based on the word counts
+     * if isSorted is false, print unsorted histogram pattern based on the word counts*/
+    public static void printHistogram(String path, boolean isSorted){
         if(findTxtFiles(path)){
             readFiles();
-            printHistogramUtil();
+            if(isSorted) {
+                sortMapByValues();
+                printHistogramUtil(true);
+            }
+            else
+                printHistogramUtil(false);
         }
     }
 
     public static void main(String[] args) {
         crawler fileCrawler = new crawler();
-        fileCrawler.printHistogram("/home/nmt/Desktop/file2");
+        fileCrawler.printHistogram("/home/nmt/Desktop/file1", true);
     }
 }
