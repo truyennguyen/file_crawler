@@ -10,8 +10,13 @@ import java.util.zip.ZipInputStream;
 import java.util.Scanner;
 
 public class crawler {
-    private static ArrayList<File> arrTextFiles = new ArrayList<File>();
-    private static Map<String, Integer> hm = new HashMap<String, Integer>();
+    private static ArrayList<File> arrTextFiles;
+    private static Map<String, Integer> hm;
+
+    public crawler() {
+        this.arrTextFiles = new ArrayList<File>();
+        this.hm = new HashMap<String, Integer>();
+    }
 
     private static boolean findTxtFiles(String path){
         File dir = new File(path);
@@ -147,6 +152,7 @@ public class crawler {
     }
 
     public static void main(String[] args) {
-        printHistogram("/home/nmt/Desktop/file1");
+        crawler fileCrawler = new crawler();
+        fileCrawler.printHistogram("/home/nmt/Desktop/file2");
     }
 }
